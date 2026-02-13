@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
-/*   Updated: 2026/02/12 13:25:12 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/13 08:19:36 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void BitcoinExchange::processInput(const std::string &filename)
         }
 
         std::string date = line.substr(0, sep - 1);
-        // Nettoyage des espaces
+        // cleaning spaces
         date.erase(remove(date.begin(), date.end(), ' '), date.end());
 
         std::string valStr = line.substr(sep + 1);
@@ -114,7 +114,7 @@ void BitcoinExchange::processInput(const std::string &filename)
             std::cout << "Error: too large a number." << std::endl;
         else
         {
-            // Trouver la date ou la date inférieure la plus proche
+            // find the nearest date (if the date exist || the nearest previous date)
             std::map<std::string, float>::iterator it = _data.upper_bound(date);
             if (it != _data.begin())
             {

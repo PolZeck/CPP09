@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:19 by pol               #+#    #+#             */
-/*   Updated: 2026/02/12 13:06:14 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/13 08:20:05 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ private:
 	bool isValidValue(const float value) const;
 
 public:
+	// canonical form
 	BitcoinExchange();
 	BitcoinExchange(const BitcoinExchange &other);
 	BitcoinExchange &operator=(const BitcoinExchange &other);
