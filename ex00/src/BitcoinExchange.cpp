@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
-/*   Updated: 2026/02/13 08:19:36 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/13 14:15:42 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,8 @@ void BitcoinExchange::processInput(const std::string &filename)
         return;
     }
 
-    std::getline(file, line); // Skip header "date | value"
+    // Skip header "date | value"
+    std::getline(file, line);
     while (std::getline(file, line))
     {
         size_t sep = line.find('|');
@@ -100,6 +101,7 @@ void BitcoinExchange::processInput(const std::string &filename)
         }
 
         std::string date = line.substr(0, sep - 1);
+
         // cleaning spaces
         date.erase(remove(date.begin(), date.end(), ' '), date.end());
 

@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:19 by pol               #+#    #+#             */
-/*   Updated: 2026/02/13 08:20:05 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/16 13:24:28 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ private:
 	std::map<std::string, float> _data;
 
 	bool isValidDate(const std::string &date) const;
-	bool isValidValue(const float value) const;
 
 public:
 	// canonical form
