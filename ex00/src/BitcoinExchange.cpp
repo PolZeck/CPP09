@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
-/*   Updated: 2026/02/13 14:15:42 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/16 13:40:13 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void BitcoinExchange::loadDatabase(const std::string &filename)
 
 void BitcoinExchange::processInput(const std::string &filename)
 {
+    // 1. OPEN INPUT FILE: Open the file provided as an argument (e.g., input.txt)
     std::ifstream file(filename.c_str());
     std::string line;
 
@@ -89,42 +90,55 @@ void BitcoinExchange::processInput(const std::string &filename)
         return;
     }
 
-    // Skip header "date | value"
+    // 2. SKIP HEADER: Read and discard the first line (usually "date | value")
     std::getline(file, line);
+
+    // 3. PROCESSING LOOP: Read the input file line by line until the end
     while (std::getline(file, line))
     {
+        // A. FIND DELIMITER: Search for the pipe '|' separator
         size_t sep = line.find('|');
-        if (sep == std::string::npos)
+        if (sep == std::string::npos) // If no separator is found, it's a formatting error
         {
             std::cout << "Error: bad input => " << line << std::endl;
-            continue;
+            continue; // Skip to the next line
         }
 
+        // B. EXTRACT DATE: Get the string before the separator
         std::string date = line.substr(0, sep - 1);
 
-        // cleaning spaces
+        // Remove any potential whitespace to ensure a clean "YYYY-MM-DD" string
         date.erase(remove(date.begin(), date.end(), ' '), date.end());
 
+        // C. EXTRACT VALUE: Get the string after the separator and convert to float
         std::string valStr = line.substr(sep + 1);
         float val = static_cast<float>(atof(valStr.c_str()));
 
-        if (!isValidDate(date))
+        // D. DATA VALIDATION: Check requirements specified in the subject
+        if (!isValidDate(date)) // Custom check for YYYY-MM-DD logic and leap years
             std::cout << "Error: bad input => " << date << std::endl;
-        else if (val < 0)
+        else if (val < 0) // Values must be positive
             std::cout << "Error: not a positive number." << std::endl;
-        else if (val > 1000)
+        else if (val > 1000) // Values must not exceed 1000
             std::cout << "Error: too large a number." << std::endl;
         else
         {
-            // find the nearest date (if the date exist || the nearest previous date)
+            // E. DATABASE SEARCH: Find the exchange rate using the map
+            // upper_bound returns an iterator to the first element STRICTLY GREATER than the date
             std::map<std::string, float>::iterator it = _data.upper_bound(date);
+
+            // If the iterator is not at the very beginning, we can move back one step
             if (it != _data.begin())
             {
+                // Decrementing 'it' gives us either the exact date OR the closest lower date
                 --it;
+
+                // F. OUTPUT RESULT: Format: date => input_value = (input_value * exchange_rate)
                 std::cout << date << " => " << val << " = " << val * it->second << std::endl;
             }
             else
             {
+                // If upper_bound is at the beginning, the requested date is older than any data in the CSV
                 std::cout << "Error: date too early." << std::endl;
             }
         }
