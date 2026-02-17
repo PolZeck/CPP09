@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
-/*   Updated: 2026/02/17 08:02:04 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/17 09:02:53 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,8 @@ void BitcoinExchange::processInput(const std::string &filename)
         // Check if the header is exactly "date | value"
         if (line != "date | value")
         {
-            // If the header is wrong, we could either print an error
-            // and stop, or try to process it as a normal line.
             // The subject implies the first line IS the header.
-            std::cout << "Error: invalid header format => " << line << std::endl;
+            std::cerr << "Error: invalid header format => " << line << std::endl;
             return;
         }
     }
