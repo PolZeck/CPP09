@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 14:05:37 by pol               #+#    #+#             */
-/*   Updated: 2026/02/17 09:12:26 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/17 10:42:03 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void RPN::performOperation(const std::string &op)
 	else if (op == "/")
 	{
 		if (b == 0)
-			throw std::runtime_error("Error"); // Division by zero
+			throw std::runtime_error("Error : Division by 0"); // Division by zero
 		_stack.push(a / b);
 	}
 }

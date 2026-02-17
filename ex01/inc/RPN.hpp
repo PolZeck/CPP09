@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 14:05:33 by pol               #+#    #+#             */
-/*   Updated: 2026/02/17 09:33:52 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/17 09:53:47 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 class RPN
 {
 private:
-	// We use std::stack as it's the most efficient LIFO container for RPN
+	// we use std::stack as it's the most efficient LastIn FirstOut container for RPN
 	std::stack<int> _stack;
 
 	// Helper functions for internal logic
