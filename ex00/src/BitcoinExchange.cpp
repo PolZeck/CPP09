@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
-/*   Updated: 2026/02/16 13:40:13 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/17 08:02:04 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,19 @@ void BitcoinExchange::processInput(const std::string &filename)
         return;
     }
 
-    // 2. SKIP HEADER: Read and discard the first line (usually "date | value")
-    std::getline(file, line);
+    // Read the first line (header)
+    if (std::getline(file, line))
+    {
+        // Check if the header is exactly "date | value"
+        if (line != "date | value")
+        {
+            // If the header is wrong, we could either print an error
+            // and stop, or try to process it as a normal line.
+            // The subject implies the first line IS the header.
+            std::cout << "Error: invalid header format => " << line << std::endl;
+            return;
+        }
+    }
 
     // 3. PROCESSING LOOP: Read the input file line by line until the end
     while (std::getline(file, line))
