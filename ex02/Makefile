@@ -6,7 +6,7 @@
 #    By: pol <pol@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/12 11:21:22 by pol               #+#    #+#              #
-#    Updated: 2026/02/12 11:21:44 by pol              ###   ########.fr        #
+#    Updated: 2026/02/17 10:53:40 by pol              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CXXFLAGS    := -Wall -Wextra -Werror -std=c++98 -Iinc
 SRC_DIR     := src
 OBJ_DIR     := obj
 
-SRC_FILES   := main.cpp BitcoinExchange.cpp 
+SRC_FILES   := main.cpp PmergeME.cpp 
 SRC         := $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ         := $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.cpp=.o))
 DEP         := $(OBJ:.o=.d)
