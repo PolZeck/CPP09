@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:28 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 11:13:30 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/19 12:56:27 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,20 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &src)
 std::vector<int> PmergeMe::generateJacobsthal(int n)
 {
 	std::vector<int> jacob;
-	if (n <= 0)
-		return jacob;
-	jacob.push_back(1);
-	if (n == 1)
-		return jacob;
-	jacob.push_back(3);
+	// On commence directement à 3 pour que le premier bloc soit [3, 2, 1]
+	int j0 = 3;
+	int j1 = 5;
+
+	if (n > 1)
+		jacob.push_back(j0);
+	if (n > 3)
+		jacob.push_back(j1);
 
 	while (true)
 	{
 		int next = jacob.back() + 2 * jacob[jacob.size() - 2];
-		if (next >= n)
-			break;
+		if (next >= n + 2)
+			break; // On génère un peu plus loin pour être sûr
 		jacob.push_back(next);
 	}
 	return jacob;
@@ -57,36 +59,48 @@ std::vector<int> PmergeMe::buildInsertionOrder(int size)
 	if (size <= 1)
 		return order;
 
+	// Récupère les nombres de Jacobsthal (3, 5, 11, 21...)
 	std::vector<int> jacob = generateJacobsthal(size);
-	int lastLimit = 1; // Index 0 is already manually inserted as the first element
+
+	// On commence à 0 car l'index 0 est inséré manuellement avant
+	// Cela permet au premier bloc de descendre jusqu'à l'index 1
+	int lastLimit = 0;
 
 	for (size_t i = 0; i < jacob.size(); i++)
 	{
-		// Must not exceed the last available index (size - 1)
+		// On ne doit pas dépasser le dernier index disponible (size - 1)
 		int upperLimit = (jacob[i] >= size) ? size - 1 : jacob[i];
 
-		// Insert indices of the current block in reverse order
+		// On insère en marche arrière jusqu'à la limite précédente
+		// Exemple : si upperLimit = 3 et lastLimit = 0 -> on ajoute 3, 2, 1
 		for (int j = upperLimit; j > lastLimit; j--)
 		{
 			order.push_back(j);
 		}
 
-		// Update the limit for the next block
+		// On met à jour la limite pour le prochain bloc
 		if (upperLimit > lastLimit)
 			lastLimit = upperLimit;
+
+		// Si on a atteint la fin du Pend, on s'arrête
+		if (upperLimit >= size - 1)
+			break;
 	}
 
-	// Safety check: if any indices were missed (rare but possible depending on n)
-	// they are added at the end.
+	// Sécurité : on ajoute les éléments restants qui n'auraient pas été
+	// couverts par la suite de Jacobsthal (cas des très grands tableaux)
 	for (int i = 1; i < size; i++)
 	{
 		bool found = false;
 		for (size_t j = 0; j < order.size(); j++)
 		{
 			if (order[j] == i)
+			{
 				found = true;
+				break;
+			}
 		}
-		if (!found && i != 0)
+		if (!found)
 			order.push_back(i);
 	}
 
