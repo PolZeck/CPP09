@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:28 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 10:58:06 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/19 11:13:30 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void PmergeMe::execute(int ac, char **av)
 		struct timeval start, end;
 		gettimeofday(&start, NULL);
 		fordJohnsonSort(_vec);
-		std::cout << "Debug: mainChain size = " << _vec.size() << std::endl;
+		// std::cout << "Debug: mainChain size = " << _vec.size() << std::endl;
 		gettimeofday(&end, NULL);
 		_vecTime = (end.tv_sec - start.tv_sec) * 1000000.0 + (end.tv_usec - start.tv_usec);
 

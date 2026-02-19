@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:25 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 10:52:11 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/19 11:33:41 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,20 @@ void PmergeMe::fordJohnsonSort(T &container)
 	if (container.size() <= 1)
 		return;
 
-	// 1. Straggler
+	// --- DEBUG: START ---
+	// std::cout << "[DEBUG] Starting Ford-Johnson on " << container.size() << " elements." << std::endl;
+
+	// 1. Straggler handling
 	bool hasStraggler = (container.size() % 2 != 0);
 	int straggler = 0;
 	if (hasStraggler)
 	{
 		straggler = container.back();
 		container.pop_back();
+		// std::cout << "[DEBUG] Straggler identified: " << straggler << std::endl;
 	}
 
-	// 2. Pairs
+	// 2. Pairs creation
 	typedef std::pair<int, int> IPair;
 	std::vector<IPair> pairs;
 	for (size_t i = 0; i < container.size(); i += 2)
@@ -91,7 +95,11 @@ void PmergeMe::fordJohnsonSort(T &container)
 			pairs.push_back(std::make_pair(container[i], container[i + 1]));
 	}
 
-	// 3. Sort Winners (Main Chain)
+	// std::cout << "[DEBUG] Pairs formed (Winner first): ";
+	// for(size_t i=0; i<pairs.size(); ++i) std::cout << "(" << pairs[i].first << "," << pairs[i].second << ") ";
+	// std::cout << std::endl;
+
+	// 3. Sort winners
 	for (size_t i = 0; i < pairs.size(); i++)
 	{
 		for (size_t j = i + 1; j < pairs.size(); j++)
@@ -101,7 +109,7 @@ void PmergeMe::fordJohnsonSort(T &container)
 		}
 	}
 
-	// 4. Split
+	// 4. Split into Main Chain and Pend
 	T mainChain;
 	T pend;
 	for (size_t i = 0; i < pairs.size(); ++i)
@@ -109,15 +117,28 @@ void PmergeMe::fordJohnsonSort(T &container)
 		mainChain.push_back(pairs[i].first);
 		pend.push_back(pairs[i].second);
 	}
+	// std::cout << "[DEBUG] Main Chain (winners sorted): ";
+	// for(size_t i=0; i<mainChain.size(); ++i) std::cout << mainChain[i] << " ";
+	// std::cout << "\n[DEBUG] Pend (losers): ";
+	// for(size_t i=0; i<pend.size(); ++i) std::cout << pend[i] << " ";
+	// std::cout << std::endl;
 
-	// 5. Initial Insertion (pend[0] is b1)
+	// 5. Initial Insertion (pend[0])
 	if (!pend.empty())
+	{
 		mainChain.insert(mainChain.begin(), pend[0]);
+		// std::cout << "[DEBUG] First pend element " << pend[0] << " inserted at start." << std::endl;
+	}
 
 	// 6. Jacobsthal Insertion
 	if (pend.size() > 1)
 	{
 		std::vector<int> insertionOrder = buildInsertionOrder(pend.size());
+
+		// std::cout << "[DEBUG] Jacobsthal insertion order (indices): ";
+		// for(size_t i=0; i<insertionOrder.size(); ++i) std::cout << insertionOrder[i] << " ";
+		// std::cout << std::endl;
+
 		for (size_t i = 0; i < insertionOrder.size(); ++i)
 		{
 			int idx = insertionOrder[i];
@@ -127,14 +148,16 @@ void PmergeMe::fordJohnsonSort(T &container)
 			int val = pend[idx];
 			typename T::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), val);
 			mainChain.insert(it, val);
+			// std::cout << "[DEBUG] Inserting pend[" << idx << "] (" << val << ") using binary search." << std::endl;
 		}
 	}
 
-	// 7. Straggler Insertion
+	// 7. Straggler
 	if (hasStraggler)
 	{
 		typename T::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), straggler);
 		mainChain.insert(it, straggler);
+		// std::cout << "[DEBUG] Final straggler " << straggler << " inserted." << std::endl;
 	}
 
 	container = mainChain;
