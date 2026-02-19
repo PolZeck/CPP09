@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:25 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 12:11:41 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/19 13:57:45 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ private:
 	std::vector<int> buildInsertionOrder(int size);
 
 public:
+	// Canonical Form
 	PmergeMe();
 	PmergeMe(const PmergeMe &src);
 	PmergeMe &operator=(const PmergeMe &src);
@@ -61,7 +62,6 @@ public:
 
 	// Parsing and validation
 	void parseInput(int ac, char **av);
-	void displayResults(const std::vector<int> &before);
 
 	// Custom exception for error handling
 	class ErrorException : public std::exception
@@ -81,7 +81,7 @@ void PmergeMe::fordJohnsonSort(T &container)
 		return;
 
 	// --- DEBUG: START ---
-	std::cout << BOLD << "[DEBUG] Starting Ford-Johnson on " << container.size() << " elements." << RESET << std::endl;
+	// std::cout << BOLD << "[DEBUG] Starting Ford-Johnson on " << container.size() << " elements." << RESET << std::endl;
 
 	// 1. Straggler handling
 	bool hasStraggler = (container.size() % 2 != 0);
@@ -90,7 +90,7 @@ void PmergeMe::fordJohnsonSort(T &container)
 	{
 		straggler = container.back();
 		container.pop_back();
-		std::cout << MAGENTA << "[DEBUG] Straggler identified: " << straggler << RESET << std::endl;
+		// std::cout << MAGENTA << "[DEBUG] Straggler identified: " << straggler << RESET << std::endl;
 	}
 
 	// 2. Pairs creation
@@ -104,10 +104,10 @@ void PmergeMe::fordJohnsonSort(T &container)
 			pairs.push_back(std::make_pair(container[i], container[i + 1]));
 	}
 
-	std::cout << CYAN << "[DEBUG] Pairs formed (Winner first): " << RESET;
-	for (size_t i = 0; i < pairs.size(); ++i)
-		std::cout << "(" << pairs[i].first << "," << pairs[i].second << ") ";
-	std::cout << std::endl;
+	// std::cout << CYAN << "[DEBUG] Pairs formed (Winner first): " << RESET;
+	// for (size_t i = 0; i < pairs.size(); ++i)
+	//	std::cout << "(" << pairs[i].first << "," << pairs[i].second << ") ";
+	// std::cout << std::endl;
 
 	// 3. Sort winners
 	for (size_t i = 0; i < pairs.size(); i++)
@@ -127,19 +127,19 @@ void PmergeMe::fordJohnsonSort(T &container)
 		mainChain.push_back(pairs[i].first);
 		pend.push_back(pairs[i].second);
 	}
-	std::cout << BLUE << "[DEBUG] Main Chain (winners sorted): " << RESET;
-	for (size_t i = 0; i < mainChain.size(); ++i)
-		std::cout << mainChain[i] << " ";
-	std::cout << YELLOW << "\n[DEBUG] Pend (losers): " << RESET;
-	for (size_t i = 0; i < pend.size(); ++i)
-		std::cout << pend[i] << " ";
-	std::cout << std::endl;
+	// std::cout << BLUE << "[DEBUG] Main Chain (winners sorted): " << RESET;
+	// for (size_t i = 0; i < mainChain.size(); ++i)
+	//	std::cout << mainChain[i] << " ";
+	// std::cout << YELLOW << "\n[DEBUG] Pend (losers): " << RESET;
+	// for (size_t i = 0; i < pend.size(); ++i)
+	//	std::cout << pend[i] << " ";
+	// std::cout << std::endl;
 
 	// 5. Initial Insertion (pend[0])
 	if (!pend.empty())
 	{
 		mainChain.insert(mainChain.begin(), pend[0]);
-		std::cout << GREEN << "[DEBUG] First pend element " << pend[0] << " inserted at start." << RESET << std::endl;
+		// std::cout << GREEN << "[DEBUG] First pend element " << pend[0] << " inserted at start." << RESET << std::endl;
 	}
 
 	// 6. Jacobsthal Insertion
@@ -147,10 +147,10 @@ void PmergeMe::fordJohnsonSort(T &container)
 	{
 		std::vector<int> insertionOrder = buildInsertionOrder(pend.size());
 
-		std::cout << BOLD << "[DEBUG] Jacobsthal insertion order (indices): " << RESET;
-		for (size_t i = 0; i < insertionOrder.size(); ++i)
-			std::cout << insertionOrder[i] << " ";
-		std::cout << std::endl;
+		// std::cout << BOLD << "[DEBUG] Jacobsthal insertion order (indices): " << RESET;
+		// for (size_t i = 0; i < insertionOrder.size(); ++i)
+		//	std::cout << insertionOrder[i] << " ";
+		// std::cout << std::endl;
 
 		for (size_t i = 0; i < insertionOrder.size(); ++i)
 		{
@@ -161,7 +161,7 @@ void PmergeMe::fordJohnsonSort(T &container)
 			int val = pend[idx];
 			typename T::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), val);
 			mainChain.insert(it, val);
-			std::cout << GREEN << "[DEBUG] Inserting pend[" << idx << "] (" << val << ") using binary search." << RESET << std::endl;
+			// std::cout << GREEN << "[DEBUG] Inserting pend[" << idx << "] (" << val << ") using binary search." << RESET << std::endl;
 		}
 	}
 
@@ -170,7 +170,7 @@ void PmergeMe::fordJohnsonSort(T &container)
 	{
 		typename T::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), straggler);
 		mainChain.insert(it, straggler);
-		std::cout << MAGENTA << "[DEBUG] Final straggler " << straggler << " inserted." << RESET << std::endl;
+		// std::cout << MAGENTA << "[DEBUG] Final straggler " << straggler << " inserted." << RESET << std::endl;
 	}
 
 	container = mainChain;
