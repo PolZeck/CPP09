@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:28 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 13:40:31 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/19 14:47:04 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,16 +109,24 @@ std::vector<int> PmergeMe::buildInsertionOrder(int size)
 
 void PmergeMe::parseInput(int ac, char **av)
 {
+	// Iterate through each command line argument starting from index 1
 	for (int i = 1; i < ac; i++)
 	{
 		std::string s(av[i]);
+
+		// VALIDATION: Check if the string is empty or contains non-digit characters
+		// find_first_not_of returns npos if only digits are found
 		if (s.empty() || s.find_first_not_of("0123456789") != std::string::npos)
 			throw ErrorException();
 
+		// CONVERSION: Convert string to long to check for overflow before casting
 		long val = std::atol(av[i]);
+
+		// RANGE CHECK: Ensure the number fits in a standard 32-bit positive integer
 		if (val > 2147483647 || val < 0)
 			throw ErrorException();
 
+		// STORAGE: Add the validated number to both required containers (vector and deque)
 		_vec.push_back(static_cast<int>(val));
 		_deq.push_back(static_cast<int>(val));
 	}
@@ -132,16 +140,17 @@ void PmergeMe::execute(int ac, char **av)
 		if (_vec.empty())
 			return;
 
-		// Display "Before"
+		// BEFORE
 		std::cout << "Before: ";
 		for (size_t i = 0; i < _vec.size(); i++)
 		{
 			std::cout << _vec[i] << (i == _vec.size() - 1 ? "" : " ");
+			// Truncate if too long
 			if (i > 10)
 			{
 				std::cout << "[...]";
 				break;
-			} // Truncate if too long
+			}
 		}
 		std::cout << std::endl;
 
@@ -149,7 +158,6 @@ void PmergeMe::execute(int ac, char **av)
 		struct timeval start, end;
 		gettimeofday(&start, NULL);
 		fordJohnsonSort(_vec);
-		// std::cout << "Debug: mainChain size = " << _vec.size() << std::endl;
 		gettimeofday(&end, NULL);
 		_vecTime = (end.tv_sec - start.tv_sec) * 1000000.0 + (end.tv_usec - start.tv_usec);
 
@@ -159,7 +167,7 @@ void PmergeMe::execute(int ac, char **av)
 		gettimeofday(&end, NULL);
 		_deqTime = (end.tv_sec - start.tv_sec) * 1000000.0 + (end.tv_usec - start.tv_usec);
 
-		// Display "After"
+		// AFTER
 		std::cout << "After:  ";
 		for (size_t i = 0; i < _vec.size(); i++)
 		{
@@ -172,7 +180,7 @@ void PmergeMe::execute(int ac, char **av)
 		}
 		std::cout << std::endl;
 
-		// Display timings
+		// TIMES
 		std::cout << "Time to process a range of " << _vec.size() << " elements with std::vector : " << std::fixed << std::setprecision(5) << _vecTime << " us" << std::endl;
 		std::cout << "Time to process a range of " << _deq.size() << " elements with std::deque  : " << std::fixed << std::setprecision(5) << _deqTime << " us" << std::endl;
 	}

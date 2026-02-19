@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:25 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 13:57:45 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/19 15:13:10 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,30 +72,28 @@ public:
 
 /**
  * FORD-JOHNSON ALGORITHM (Template Implementation)
- * This needs to be in the header or included by it because it's a template.
  */
 template <typename T>
 void PmergeMe::fordJohnsonSort(T &container)
 {
+	// 1. Base case: if container has 0 or 1 element, it is already sorted
 	if (container.size() <= 1)
 		return;
 
-	// --- DEBUG: START ---
-	// std::cout << BOLD << "[DEBUG] Starting Ford-Johnson on " << container.size() << " elements." << RESET << std::endl;
-
-	// 1. Straggler handling
+	// 2. Straggler handling: if size is odd, remove the last element temporarily
 	bool hasStraggler = (container.size() % 2 != 0);
 	int straggler = 0;
 	if (hasStraggler)
 	{
 		straggler = container.back();
 		container.pop_back();
-		// std::cout << MAGENTA << "[DEBUG] Straggler identified: " << straggler << RESET << std::endl;
 	}
 
-	// 2. Pairs creation
-	typedef std::pair<int, int> IPair;
-	std::vector<IPair> pairs;
+	// 3. Pair creation: pair up elements and ensure the larger one is first
+	// Typedef used to avoid C++98 ">>" nested template error
+	typedef std::pair<int, int> IntPair;
+	std::vector<IntPair> pairs;
+
 	for (size_t i = 0; i < container.size(); i += 2)
 	{
 		if (container[i] < container[i + 1])
@@ -104,53 +102,41 @@ void PmergeMe::fordJohnsonSort(T &container)
 			pairs.push_back(std::make_pair(container[i], container[i + 1]));
 	}
 
-	// std::cout << CYAN << "[DEBUG] Pairs formed (Winner first): " << RESET;
-	// for (size_t i = 0; i < pairs.size(); ++i)
-	//	std::cout << "(" << pairs[i].first << "," << pairs[i].second << ") ";
-	// std::cout << std::endl;
-
-	// 3. Sort winners
+	// 4. Recursive Sort: Extract winners and sort them by calling the algorithm on itself
+	T winners;
 	for (size_t i = 0; i < pairs.size(); i++)
+		winners.push_back(pairs[i].first);
+
+	fordJohnsonSort(winners);
+
+	// 5. Reconstruction: build Main Chain and Pend while maintaining winner-loser relationships
+	T mainChain;
+	T pend;
+
+	for (typename T::iterator it = winners.begin(); it != winners.end(); ++it)
 	{
-		for (size_t j = i + 1; j < pairs.size(); j++)
+		int winner = *it;
+		mainChain.push_back(winner);
+
+		for (size_t i = 0; i < pairs.size(); i++)
 		{
-			if (pairs[i].first > pairs[j].first)
-				std::swap(pairs[i], pairs[j]);
+			if (pairs[i].first == winner)
+			{
+				pend.push_back(pairs[i].second);
+				pairs[i].first = -1; // Mark as used to handle duplicate values
+				break;
+			}
 		}
 	}
 
-	// 4. Split into Main Chain and Pend
-	T mainChain;
-	T pend;
-	for (size_t i = 0; i < pairs.size(); ++i)
-	{
-		mainChain.push_back(pairs[i].first);
-		pend.push_back(pairs[i].second);
-	}
-	// std::cout << BLUE << "[DEBUG] Main Chain (winners sorted): " << RESET;
-	// for (size_t i = 0; i < mainChain.size(); ++i)
-	//	std::cout << mainChain[i] << " ";
-	// std::cout << YELLOW << "\n[DEBUG] Pend (losers): " << RESET;
-	// for (size_t i = 0; i < pend.size(); ++i)
-	//	std::cout << pend[i] << " ";
-	// std::cout << std::endl;
-
-	// 5. Initial Insertion (pend[0])
+	// 6. Initial insertion: the first element of pend is always smaller or equal to the first winner
 	if (!pend.empty())
-	{
 		mainChain.insert(mainChain.begin(), pend[0]);
-		// std::cout << GREEN << "[DEBUG] First pend element " << pend[0] << " inserted at start." << RESET << std::endl;
-	}
 
-	// 6. Jacobsthal Insertion
+	// 7. Jacobsthal insertion: insert remaining pend elements using binary search in specific order
 	if (pend.size() > 1)
 	{
 		std::vector<int> insertionOrder = buildInsertionOrder(pend.size());
-
-		// std::cout << BOLD << "[DEBUG] Jacobsthal insertion order (indices): " << RESET;
-		// for (size_t i = 0; i < insertionOrder.size(); ++i)
-		//	std::cout << insertionOrder[i] << " ";
-		// std::cout << std::endl;
 
 		for (size_t i = 0; i < insertionOrder.size(); ++i)
 		{
@@ -159,20 +145,20 @@ void PmergeMe::fordJohnsonSort(T &container)
 				continue;
 
 			int val = pend[idx];
+			// Binary search to find the correct insertion position
 			typename T::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), val);
 			mainChain.insert(it, val);
-			// std::cout << GREEN << "[DEBUG] Inserting pend[" << idx << "] (" << val << ") using binary search." << RESET << std::endl;
 		}
 	}
 
-	// 7. Straggler
+	// 8. Final Straggler insertion: insert the odd element back if it exists
 	if (hasStraggler)
 	{
 		typename T::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), straggler);
 		mainChain.insert(it, straggler);
-		// std::cout << MAGENTA << "[DEBUG] Final straggler " << straggler << " inserted." << RESET << std::endl;
 	}
 
+	// Final result is assigned back to the original container
 	container = mainChain;
 }
 
