@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:28 by pol               #+#    #+#             */
-/*   Updated: 2026/02/19 14:47:04 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/23 12:18:08 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,8 +154,9 @@ void PmergeMe::execute(int ac, char **av)
 		}
 		std::cout << std::endl;
 
-		// Measure Vector time
 		struct timeval start, end;
+
+		// Measure Vector time
 		gettimeofday(&start, NULL);
 		fordJohnsonSort(_vec);
 		gettimeofday(&end, NULL);
