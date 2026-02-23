@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
-/*   Updated: 2026/02/17 09:02:53 by pol              ###   ########.fr       */
-/*                                                                            */
+/* */
+/* :::      ::::::::   */
+/* BitcoinExchange.cpp                                :+:      :+:    :+:   */
+/* +:+ +:+         +:+     */
+/* By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
+/* +#+#+#+#+#+   +#+           */
+/* Created: 2026/02/12 11:20:06 by pol               #+#    #+#             */
+/* Updated: 2026/02/17 09:02:53 by pol              ###   ########.fr       */
+/* */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
@@ -93,61 +93,71 @@ void BitcoinExchange::processInput(const std::string &filename)
     // Read the first line (header)
     if (std::getline(file, line))
     {
-        // Check if the header is exactly "date | value"
         if (line != "date | value")
         {
-            // The subject implies the first line IS the header.
             std::cerr << "Error: invalid header format => " << line << std::endl;
             return;
         }
     }
 
-    // 3. PROCESSING LOOP: Read the input file line by line until the end
+    // 3. PROCESSING LOOP: Read the input file line by line
     while (std::getline(file, line))
     {
+        // Skip empty lines
+        if (line.empty())
+            continue;
+
         // A. FIND DELIMITER: Search for the pipe '|' separator
         size_t sep = line.find('|');
-        if (sep == std::string::npos) // If no separator is found, it's a formatting error
+        if (sep == std::string::npos)
         {
             std::cout << "Error: bad input => " << line << std::endl;
-            continue; // Skip to the next line
+            continue;
         }
 
         // B. EXTRACT DATE: Get the string before the separator
-        std::string date = line.substr(0, sep - 1);
-
-        // Remove any potential whitespace to ensure a clean "YYYY-MM-DD" string
+        std::string date = line.substr(0, sep);
+        // Remove spaces
         date.erase(remove(date.begin(), date.end(), ' '), date.end());
 
-        // C. EXTRACT VALUE: Get the string after the separator and convert to float
+        // C. EXTRACT VALUE: Rigorous check for numeric value
         std::string valStr = line.substr(sep + 1);
-        float val = static_cast<float>(atof(valStr.c_str()));
+        std::stringstream ss(valStr);
+        float val;
+        std::string extra;
 
-        // D. DATA VALIDATION: Check requirements specified in the subject
-        if (!isValidDate(date)) // Custom check for YYYY-MM-DD logic and leap years
+        // Check if it's a valid float AND if there is no "trash" after the number
+        if (!(ss >> val))
+        {
+            std::cout << "Error: bad input => " << valStr << std::endl;
+            continue;
+        }
+        if (ss >> extra)
+        { // If this succeeds, it means there's more content after the float
+            std::cout << "Error: bad input => " << line << std::endl;
+            continue;
+        }
+
+        // D. DATA VALIDATION
+        if (!isValidDate(date))
             std::cout << "Error: bad input => " << date << std::endl;
-        else if (val < 0) // Values must be positive
+        else if (val < 0)
             std::cout << "Error: not a positive number." << std::endl;
-        else if (val > 1000) // Values must not exceed 1000
+        else if (val > 1000)
             std::cout << "Error: too large a number." << std::endl;
         else
         {
-            // E. DATABASE SEARCH: Find the exchange rate using the map
-            // upper_bound returns an iterator to the first element STRICTLY GREATER than the date
+            // E. DATABASE SEARCH
             std::map<std::string, float>::iterator it = _data.upper_bound(date);
 
-            // If the iterator is not at the very beginning, we can move back one step
             if (it != _data.begin())
             {
-                // Decrementing 'it' gives us either the exact date OR the closest lower date
                 --it;
-
-                // F. OUTPUT RESULT: Format: date => input_value = (input_value * exchange_rate)
+                // F. OUTPUT RESULT
                 std::cout << date << " => " << val << " = " << val * it->second << std::endl;
             }
             else
             {
-                // If upper_bound is at the beginning, the requested date is older than any data in the CSV
                 std::cout << "Error: date too early." << std::endl;
             }
         }
