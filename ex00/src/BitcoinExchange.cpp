@@ -96,7 +96,6 @@ void BitcoinExchange::processInput(const std::string &filename)
         if (line != "date | value")
         {
             std::cerr << "Error: invalid header format => " << line << std::endl;
-            return;
         }
     }
 

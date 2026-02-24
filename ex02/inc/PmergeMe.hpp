@@ -6,7 +6,7 @@
 /*   By: pol <pol@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/17 10:53:25 by pol               #+#    #+#             */
-/*   Updated: 2026/02/23 11:24:02 by pol              ###   ########.fr       */
+/*   Updated: 2026/02/24 08:58:01 by pol              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ class PmergeMe
 {
 private:
 	// Containers for the two required implementations
+	// Fast index-based access and contiguous memory, ideal for the primary sorting steps.
 	std::vector<int> _vec;
+
+	// Fast insertions at the front and back, used to demonstrate algorithm genericity via templates.
 	std::deque<int> _deq;
 
 	// Time storage (in microseconds)
